@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Mirich</title>
+<link rel="icon" type="image/jpeg" href="icon.png.jpg">
+<link rel="apple-touch-icon" href="icon.png.jpg">
+<meta name="theme-color" content="#000000">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100dvh}
+body{background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+.stickyTop{flex-shrink:0;background:#000;z-index:20;padding-top:14px;padding-bottom:6px;border-bottom:1px solid #111}
+.main{flex:1;overflow-y:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 0}
+.topbar b{font-family:Georgia,serif;font-size:27px;font-weight:400;letter-spacing:2px;white-space:nowrap}
+.topbar span{color:#C9A86A;font-size:12px;letter-spacing:2px;white-space:nowrap}
+.header{padding:24px 22px 8px;display:flex;justify-content:space-between;align-items:center}
+.header b{font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:1px;display:flex;align-items:center;gap:12px}
+.header b img{width:52px;height:52px;border-radius:14px;flex-shrink:0;object-fit:cover}
+.header small{color:#999;font-size:16px;letter-spacing:3px;font-weight:400}
+.dot{width:12px;height:12px;background:#00C853;border-radius:50%;display:inline-block;margin-left:8px;box-shadow:0 0 8px #00C853}
+.search{margin:18px 22px 6px;background:#000;border:1px solid #555;padding:6px 14px;display:flex;align-items:center;gap:8px}
+.search input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;font-size:19px;padding:18px 0}
+.search input::placeholder{color:#999}
+.search b{color:#2D7DFF;font-weight:400;font-size:18px;white-space:nowrap;padding:10px 4px}
+.divider{height:2px;background:linear-gradient(90deg,#FFC107 0%,#00C853 50%,#2D7DFF 100%);margin:16px 22px 6px;border-radius:2px}
+.chat{display:flex;gap:18px;padding:24px 22px;cursor:pointer;border-bottom:1px solid #222;align-items:center}
+.chat:active{background:#0D0D0D}
+.avatar{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:27px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.a1{background:#0A1A2F;border:2px solid #2D7DFF}.a2{background:#0A1F14;border:2px solid #00C853}.a3{background:#2A0808;border:2px solid #FF5252}.a4{background:#111;border:2px solid #2D7DFF}
+.chat-info{flex:1;min-width:0}
+.chat-top{display:flex;justify-content:space-between;align-items:center}
+.chat-top b{font-size:22px}
+.chat-top span{font-size:15px;color:#888}
+.chat p{font-size:18px;color:#bbb;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.green{color:#9ACD32}
+.footer-note{text-align:center;color:#666;font-size:12px;padding:26px;letter-spacing:2px}
+.footer-note b{color:#FFC107}
+.compose{position:fixed;right:20px;bottom:118px;background:#FFC107;color:#000;width:64px;height:64px;border-radius:50%;font-size:32px;border:none;box-shadow:0 8px 20px rgba(255,193,7,.4);z-index:10}
+.bottom{flex-shrink:0;background:#000;border-top:1px solid #333;display:flex;justify-content:space-around;padding:14px 0 calc(16px + env(safe-area-inset-bottom))}
+.bottom div{text-align:center;font-size:16px;color:#fff;letter-spacing:1px}
+.bottom .active{color:#fff;font-weight:bold}
+.bottom em{display:block;font-style:normal;font-size:20px;margin-bottom:4px}
+#chatWindow{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0B0B0B;flex-direction:column;z-index:30}
+#chatHeader{background:#000;padding:12px 12px;display:flex;gap:10px;align-items:center;border-bottom:1px solid #222;padding-top:calc(12px + env(safe-area-inset-top))}
+#chatHeader .avatar{width:46px;height:46px;font-size:19px}
+#chatHeaderInfo{flex:1;min-width:0}
+#chatHeaderInfo b{font-size:20px;display:block}
+#chatHeaderInfo span{font-size:13px;color:#00C853}
+#chatHeaderIcons{display:flex;gap:22px;align-items:center;padding-right:6px}
+.callIcon{width:28px;height:28px;cursor:pointer}
+.backBtn{font-size:30px;color:#fff;cursor:pointer;padding:0 4px}
+#msgs{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.dateSep{align-self:center;background:#1A1A1A;color:#aaa;font-size:12px;padding:6px 14px;border-radius:20px;margin:10px 0;letter-spacing:1px}
+.bubble{max-width:82%;padding:10px 12px 6px;font-size:17px;line-height:1.45;border-radius:16px;position:relative;word-wrap:break-word}
+.me{background:#1A4DFF;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.other{background:#1E1E1E;align-self:flex-start;border:1px solid #2A2A2A;border-bottom-left-radius:4px}
+.bubble small{display:block;text-align:right;font-size:11px;color:rgba(255,255,255,.7);margin-top:6px}
+.other small{color:#888}
+.typing{display:none;align-self:flex-start;background:#1E1E1E;padding:12px 16px;border-radius:16px;border-bottom-left-radius:4px;font-size:14px;color:#aaa}
+#inputBar{display:flex;gap:8px;padding:10px 10px calc(12px + env(safe-area-inset-bottom));background:#000;border-top:1px solid #222;align-items:center}
+#inputBar .iconBtn{font-size:24px;color:#888;background:none;border:none}
+#inputBar input{flex:1;padding:14px 18px;border-radius:28px;border:1px solid #333;background:#111;color:#fff;outline:none;font-size:17px}
+#inputBar button{background:#00C853;color:#000;border:none;width:52px;height:52px;border-radius:50%;font-size:22px;font-weight:bold;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="stickyTop">
+<div class="topbar"><b>MIRICH</b><span>PRIVATE MESSAGING</span></div>
+<div class="header"><div><b><img src="icon.png.jpg" alt="Mirich"> Mirich <span class="dot"></span></b><br><small>MESSAGES</small></div><div style="color:#fff;font-size:28px">...</div></div>
+<div class="search"><input id="searchInput" placeholder="Search or ask Mirich AI" onkeydown="if(event.key==='Enter') askMirich()"><b onclick="askMirich()">Ask</b></div>
+<div class="divider"></div>
+</div>
+<div class="main">
+<div class="chat" onclick="openChat('Mirich AI','M')">
+<div class="avatar a4"><img src="icon.png.jpg"></div>
+<div class="chat-info"><div class="chat-top"><b>Mirich AI</b><span>10:29</span></div><p>Ask me about loans, business, school...</p></div>
+</div>
+<div class="chat" onclick="openChat('Alexander','A')">
+<div class="avatar a1">A</div>
+<div class="chat-info"><div class="chat-top"><b>Alexander</b><span>10:21</span></div><p><span class="green">✓✓</span> Certainly, let us proceed.</p></div>
+</div>
+<div class="chat" onclick="openChat('Sophia','S')">
+<div class="avatar a2">S</div>
+<div class="chat-info"><div class="chat-top"><b>Sophia</b><span>08:47</span></div><p><span class="green">✓✓</span> Understood. Thank you.</p></div>
+</div>
+<div class="chat" onclick="openChat('James','J')">
+<div class="avatar a3">J</div>
+<div class="chat-info"><div class="chat-top"><b>James</b><span>31 Oct</span></div><p><span class="green">✓✓</span> Noted.</p></div>
+</div>
+<div class="footer-note">MIRICH • <b>SECURE</b> • PRIVATE</div>
+</div>
+<button class="compose" onclick="openChat('Mirich AI','M')">+</button>
+<div class="bottom">
+<div class="active"><em>—</em>Chats</div>
+<div><em>—</em>Feed</div>
+<div><em>—</em>Calls</div>
+<div><em>—</em>Profile</div>
+</div>
+<div id="chatWindow">
+<div id="chatHeader"><span class="backBtn" onclick="closeChat()">‹</span><div class="avatar a1" id="chatAvatar">A</div><div id="chatHeaderInfo"><b id="chatName">Alexander</b><span id="chatStatus">Online</span></div><div id="chatHeaderIcons">
+<svg class="callIcon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5c.6 0 1 .4 1 1 0 1.2.2 2.3.6 3.4.1.3 0 .7-.2 1l-1.4 1.4a13 13 0 0 0 6.2 6.2l1.4-1.4c.3-.2.7-.3 1-.2 1.1.4 2.2.6 3.4.6.6 0 1 .4 1 1v3.5c0 .6-.4 1-1 1C11.5 20 4 12.5 4 4.5c0-.6.4-1 1-1h1.5Z"/></svg>
+<svg class="callIcon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="13.5" height="11" rx="1.5"/><path d="M16 10.2l4.5-2.7v9L16 13.8Z"/></svg>
+<span style="font-size:24px">⋮</span></div></div>
+<div id="msgs"></div>
+<div class="typing" id="typing">typing...</div>
+<div id="inputBar"><button class="iconBtn">☺</button><button class="iconBtn">📎</button><input id="msgInput" placeholder="Message..."><button onclick="sendMsg()">➤</button></div>
+</div>
+<script>
+let currentChat='Mirich AI';
+function timeNow(){let d=new Date();let h=d.getHours();let m=d.getMinutes();if(m<10)m='0'+m;return h+':'+m}
+function openChat(name,letter){
+currentChat=name;
+document.getElementById('chatName').innerText=name;
+document.getElementById('chatAvatar').innerText=letter;
+document.getElementById('chatStatus').innerText = name==='Mirich AI' ? 'Online • AI Assistant' : 'Online';
+document.getElementById('chatWindow').style.display='flex';
+if(name==='Mirich AI'){
+document.getElementById('msgs').innerHTML='<div class="dateSep">TODAY</div><div class="bubble other">Hello, I am Mirich AI. Ask me about loans, business, school, money, health, anything. Try: Tell me about loans<small>10:29 ✓✓</small></div>';
+} else {
+document.getElementById('msgs').innerHTML='<div class="dateSep">TODAY</div><div class="bubble other">Good day. This is '+name+'.<small>10:21 ✓✓</small></div><div class="bubble me">Hello '+name+', how are you?<small>'+timeNow()+' ✓✓</small></div>';
+}
+}
+function closeChat(){document.getElementById('chatWindow').style.display='none'}
+function addBubble(text,who){
+let d=document.createElement('div');d.className='bubble '+who;d.innerHTML=text.replace(/</g,'')+'<small>'+timeNow()+' ✓✓</small>';
+document.getElementById('msgs').appendChild(d);
+document.getElementById('msgs').scrollTop=9999;
+}
+function mirichReply(qOrig){
+let q=qOrig.toLowerCase();
+if(q.includes('499')||q.includes('code 499')) return 'Code 499 accepted. Access granted. Welcome to Mirich VIP. You now have private priority access. What do you want me to do for you first?';
+if(q.includes('how do you answer')||q.includes('how do you work')) return 'I read your question, look for keywords like loans, business, school, then I give you the best answer I know. I am built inside Mirich so I work fast even without internet. Try me: ask about loans or business.';
+if(q.includes('loin')||q.includes('loan')) return 'LOANS - Here is what you need to know:\n\n1. A loan is money you borrow and pay back with interest.\n2. Types: Personal loan, Business loan, Student loan, Mobile loan (MTN QwikLoan, Telecel, etc).\n3. Before you take a loan, check: Interest rate, How long to pay, Total amount you will pay back, Penalty for late payment.\n4. Smart rule: Only borrow for something that will bring money back, like business, not for enjoyment.\n\nDo you want a loan for business or for personal use? Tell me and I will guide you.';
+if(q.includes('money')||q.includes('make money')||q.includes('rich')) return 'HOW TO MAKE MONEY IN GHANA:\n\n1. Sell something people need every day - food, water, phone accessories, clothes.\n2. Learn a skill - hair, phone repair, graphic design, baking.\n3. Use Mirich / WhatsApp to sell - post daily, answer fast.\n4. Save small small - even 5 cedis a day is 150 a month.\n\nWhat skill or business are you interested in? I can help you plan it.';
+if(q.includes('business')||q.includes('shop')||q.includes('sell')) return 'STARTING A BUSINESS:\n\n1. Pick what people in Kumasi buy a lot.\n2. Start small - test with 100-500 cedis first.\n3. Find cheap supplier, add your profit, sell.\n4. Keep your money separate from business money.\n5. Post on Mirich, WhatsApp Status, TikTok every day.\n\nTell me what you want to sell and I will make a plan for you.';
+if(q.includes('school')||q.includes('study')||q.includes('exam')||q.includes('maths')||q.includes('math')||q.includes('english')||q.includes('science')) return 'SCHOOL HELP:\n\nTell me your subject and topic and I will explain it simple. Example: "Explain photosynthesis" or "Help me with maths".\n\nStudy tip: Read 25 mins, rest 5 mins, write what you remember. That works better than reading all day.\n\nWhat subject are you studying?';
+if(q.includes('love')||q.includes('girlfriend')||q.includes('boyfriend')||q.includes('crush')) return 'LOVE ADVICE:\n\nBe honest, respect the person, and talk - don\'t assume. If someone likes you, they will make time for you. If they always ignore you, protect your heart and move on. Good love makes you peaceful, not stressed.\n\nDo you want help writing a message to someone?';
+if(q.includes('health')||q.includes('sick')||q.includes('fever')||q.includes('headache')) return 'HEALTH:\n\nDrink plenty of water, rest, and eat well. If you have fever for more than 2 days, severe headache, or difficulty breathing, please go to a clinic or hospital quickly. Don\'t just take medicine without knowing what it is.\n\nWhat symptoms are you feeling?';
+if(q.includes('who are you')||q.includes('your name')||q.includes('what is mirich')||q.includes('who made')) return 'I am Mirich AI, your private assistant inside Mirich. Mirich is a private messaging app made for you. I can help you chat, answer questions, and plan business and school.';
+if(q.includes('hello')||q.includes('hi ')||q==='hi'||q.includes('good morning')||q.includes('good afternoon')||q.includes('good evening')) return 'Hello! Good to see you on Mirich. How can I help you today? You can ask me about loans, business, school, money, health, love...';
+if(q.includes('thank')) return 'You are welcome! Anytime. Ask me another question.';
+if(q.includes('bye')) return 'Goodbye for now. I will be here when you need me.';
+if(q.includes('help')||q.includes('what can you')) return 'I can help you with:\n- Loans & Money\n- Business ideas\n- School & Study\n- Love & Advice\n- Health tips\n- Writing messages\n\nJust type: "Tell me about business" or "Tell me about loans"';
+if(q.includes('tell me about')||q.includes('what is')||q.includes('explain')) return 'About "'+qOrig+'": This is an important topic. In simple words - it is something that affects your life, money, or future. The best way is to understand it step by step: 1) What it is, 2) Why it matters, 3) How to use it well. Tell me more specifically - for example "Tell me about loans for business" and I will give you a full explanation.';
+return 'I understand you said: "'+qOrig+'". Can you tell me more? Is it about loans, business, school, money, love or health? Example: Type "Tell me about business" and I will explain it fully.';
+}
+function personReply(name,q){
+if(name==='Sophia') return 'Thank you, that means a lot. I am doing well, how about you?';
+if(name==='Alexander') return 'Certainly. I understand. Let us proceed with that.';
+if(name==='James') return 'Noted. I will get back to you shortly.';
+return 'Got it.';
+}
+function askMirich(){
+let inp=document.getElementById('searchInput');
+let q=inp.value.trim();
+if(!q) return;
+openChat('Mirich AI','M');
+addBubble(q,'me');
+showTyping(q);
+inp.value='';
+}
+function showTyping(q){
+let t=document.getElementById('typing');
+t.style.display='block';
+t.innerText = currentChat + ' is typing...';
+document.getElementById('msgs').scrollTop=9999;
+setTimeout(function(){ t.style.display='none';
+if(currentChat==='Mirich AI') addBubble(mirichReply(q),'other');
+else addBubble(personReply(currentChat,q),'other');
+},900);
+}
+function sendMsg(){
+let inp=document.getElementById('msgInput');
+if(!inp.value) return;
+let q=inp.value;
+addBubble(q,'me');
+inp.value='';
+showTyping(q);
+}
+document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') sendMsg(); });
+</script>
+</body>
+</html>
