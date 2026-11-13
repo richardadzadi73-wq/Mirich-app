@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Mirich</title>
+<link rel="icon" type="image/jpeg" href="icon.png.jpg">
+<link rel="apple-touch-icon" href="icon.png.jpg">
+<meta name="theme-color" content="#000000">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;height:100dvh}
+body{background:#000;color:#fff;font-family:Arial,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+.stickyTop{flex-shrink:0;background:#000;z-index:20;padding-top:14px;padding-bottom:6px;border-bottom:1px solid #111}
+.main{flex:1;overflow-y:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 0}
+.topbar b{font-family:Georgia,serif;font-size:27px;font-weight:400;letter-spacing:2px;white-space:nowrap}
+.topbar span{color:#C9A86A;font-size:12px;letter-spacing:2px;white-space:nowrap}
+.header{padding:24px 22px 8px;display:flex;justify-content:space-between;align-items:center}
+.header b{font-family:Georgia,serif;font-size:42px;font-weight:400;letter-spacing:1px;display:flex;align-items:center;gap:12px}
+.header b img{width:52px;height:52px;border-radius:14px;flex-shrink:0;object-fit:cover}
+.header small{color:#999;font-size:16px;letter-spacing:3px;font-weight:400}
+.dot{width:12px;height:12px;background:#00C853;border-radius:50%;display:inline-block;margin-left:8px;box-shadow:0 0 8px #00C853}
+.search{margin:18px 22px 6px;background:#000;border:1px solid #555;padding:6px 14px;display:flex;align-items:center;gap:8px}
+.search input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;font-size:19px;padding:18px 0}
+.search input::placeholder{color:#999}
+.search b{color:#2D7DFF;font-weight:400;font-size:18px;white-space:nowrap;padding:10px 4px}
+.divider{height:2px;background:linear-gradient(90deg,#FFC107 0%,#00C853 50%,#2D7DFF 100%);margin:16px 22px 6px;border-radius:2px}
+.chat{display:flex;gap:18px;padding:24px 22px;cursor:pointer;border-bottom:1px solid #222;align-items:center}
+.chat:active{background:#0D0D0D}
+.avatar{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:27px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.a1{background:#0A1A2F;border:2px solid #2D7DFF}.a2{background:#0A1F14;border:2px solid #00C853}.a3{background:#2A0808;border:2px solid #FF5252}.a4{background:#111;border:2px solid #2D7DFF}
+.chat-info{flex:1;min-width:0}
+.chat-top{display:flex;justify-content:space-between;align-items:center}
+.chat-top b{font-size:22px}
+.chat-top span{font-size:15px;color:#888}
+.chat p{font-size:18px;color:#bbb;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.green{color:#9ACD32}
+.footer-note{text-align:center;color:#666;font-size:12px;padding:26px;letter-spacing:2px}
+.footer-note b{color:#FFC107}
+.compose{position:fixed;right:20px;bottom:118px;background:#FFC107;color:#000;width:64px;height:64px;border-radius:50%;font-size:32px;border:none;box-shadow:0 8px 20px rgba(255,193,7,.4);z-index:10}
+.bottom{flex-shrink:0;background:#000;border-top:1px solid #333;display:flex;justify-content:space-around;padding:14px 0 calc(16px + env(safe-area-inset-bottom))}
+.bottom div{text-align:center;font-size:16px;color:#fff;letter-spacing:1px}
+.bottom .active{color:#fff;font-weight:bold}
+.bottom em{display:block;font-style:normal;font-size:20px;margin-bottom:4px}
+#chatWindow{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0B0B0B;flex-direction:column;z-index:30}
+#chatHeader{background:#000;padding:12px 12px;display:flex;gap:10px;align-items:center;border-bottom:1px solid #222;padding-top:calc(12px + env(safe-area-inset-top))}
+#chatHeader .avatar{width:46px;height:46px;font-size:19px}
+#chatHeaderInfo{flex:1;min-width:0}
+#chatHeaderInfo b{font-size:20px;display:block}
+#chatHeaderInfo span{font-size:13px;color:#00C853}
+#chatHeaderIcons{display:flex;gap:22px;align-items:center;padding-right:6px}
+.callIcon{width:28px;height:28px;cursor:pointer}
+.backBtn{font-size:30px;color:#fff;cursor:pointer;padding:0 4px}
+#msgs{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.dateSep{align-self:center;background:#1A1A1A;color:#aaa;font-size:12px;padding:6px 14px;border-radius:20px;margin:10px 0;letter-spacing:1px}
+.bubble{max-width:85%;padding:12px 12px 6px;font-size:17px;line-height:1.55;border-radius:16px;position:relative;word-wrap:break-word;white-space:pre-wrap}
+.me{background:#1A4DFF;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.other{background:#1E1E1E;align-self:flex-start;border:1px solid #2A2A2A;border-bottom-left-radius:4px}
+.bubble small{display:block;text-align:right;font-size:11px;color:rgba(255,255,255,.7);margin-top:8px}
+.other small{color:#888}
+.bubble b{color:#fff}
+.bubble img{width:100%;border-radius:12px;margin-top:8px;display:block}
+.typing{display:none;align-self:flex-start;background:#1E1E1E;padding:12px 16px;border-radius:16px;border-bottom-left-radius:4px;font-size:14px;color:#aaa}
+#inputBar{display:flex;gap:8px;padding:10px 10px calc(12px + env(safe-area-inset-bottom));background:#000;border-top:1px solid #222;align-items:center}
+#inputBar .iconBtn{font-size:24px;color:#888;background:none;border:none}
+#inputBar input{flex:1;padding:14px 18px;border-radius:28px;border:1px solid #333;background:#111;color:#fff;outline:none;font-size:17px}
+#inputBar button{background:#00C853;color:#000;border:none;width:52px;height:52px;border-radius:50%;font-size:22px;font-weight:bold;flex-shrink:0}
+.codeBox{background:#000;border:1px solid #333;border-radius:10px;padding:10px;margin-top:8px;overflow-x:auto;font-family:monospace;font-size:13px;line-height:1.5;white-space:pre-wrap;color:#A5D6A7}
+.copyBtn{background:#FFC107;color:#000;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;margin-top:8px;cursor:pointer;font-size:14px}
+.quickRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.quickBtn{background:#222;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:20px;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="stickyTop">
+<div class="topbar"><b>MIRICH</b><span>PRIVATE MESSAGING</span></div>
+<div class="header"><div><b><img src="icon.png.jpg" alt="Mirich"> Mirich <span class="dot"></span></b><br><small>MESSAGES</small></div><div style="color:#fff;font-size:28px">...</div></div>
+<div class="search"><input id="searchInput" placeholder="Ask Mirich AI anything..." onkeydown="if(event.key==='Enter') askMirich()"><b onclick="askMirich()">Ask</b></div>
+<div class="divider"></div>
+</div>
+<div class="main">
+<div class="chat" onclick="openChat('Mirich AI','M')">
+<div class="avatar a4"><img src="icon.png.jpg"></div>
+<div class="chat-info"><div class="chat-top"><b>Mirich AI</b><span>10:29</span></div><p>ChatGPT-style • Maths • Images • Code • Pidgin...</p></div>
+</div>
+<div class="chat" onclick="openChat('Alexander','A')">
+<div class="avatar a1">A</div>
+<div class="chat-info"><div class="chat-top"><b>Alexander</b><span>10:21</span></div><p><span class="green">✓✓</span> Certainly, let us proceed.</p></div>
+</div>
+<div class="chat" onclick="openChat('Sophia','S')">
+<div class="avatar a2">S</div>
+<div class="chat-info"><div class="chat-top"><b>Sophia</b><span>08:47</span></div><p><span class="green">✓✓</span> Understood. Thank you.</p></div>
+</div>
+<div class="chat" onclick="openChat('James','J')">
+<div class="avatar a3">J</div>
+<div class="chat-info"><div class="chat-top"><b>James</b><span>31 Oct</span></div><p><span class="green">✓✓</span> Noted.</p></div>
+</div>
+<div class="footer-note">MIRICH • <b>SECURE</b> • PRIVATE • v22</div>
+</div>
+<button class="compose" onclick="openChat('Mirich AI','M')">+</button>
+<div class="bottom">
+<div class="active"><em>—</em>Chats</div>
+<div><em>—</em>Feed</div>
+<div><em>—</em>Calls</div>
+<div><em>—</em>Profile</div>
+</div>
+<div id="chatWindow">
+<div id="chatHeader"><span class="backBtn" onclick="closeChat()">‹</span><div class="avatar a1" id="chatAvatar">A</div><div id="chatHeaderInfo"><b id="chatName">Alexander</b><span id="chatStatus">Online</span></div><div id="chatHeaderIcons">
+<svg class="callIcon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5c.6 0 1 .4 1 1 0 1.2.2 2.3.6 3.4.1.3 0 .7-.2 1l-1.4 1.4a13 13 0 0 0 6.2 6.2l1.4-1.4c.3-.2.7-.3 1-.2 1.1.4 2.2.6 3.4.6.6 0 1 .4 1 1v3.5c0 .6-.4 1-1 1C11.5 20 4 12.5 4 4.5c0-.6.4-1 1-1h1.5Z"/></svg>
+<svg class="callIcon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="13.5" height="11" rx="1.5"/><path d="M16 10.2l4.5-2.7v9L16 13.8Z"/></svg>
+<span style="font-size:24px">⋮</span></div></div>
+<div id="msgs"></div>
+<div class="typing" id="typing">typing...</div>
+<div id="inputBar"><button class="iconBtn">☺</button><button class="iconBtn">📎</button><input id="msgInput" placeholder="Message..."><button onclick="sendMsg()">➤</button></div>
+</div>
+<script>
+let currentChat='Mirich AI';
+let history=[];
+let lastMath='';
+let lastTopic='';
+function timeNow(){let d=new Date();let h=d.getHours();let m=d.getMinutes();if(m<10)m='0'+m;return h+':'+m}
+function openChat(name,letter){
+currentChat=name;
+document.getElementById('chatName').innerText=name;
+document.getElementById('chatAvatar').innerText=letter;
+document.getElementById('chatStatus').innerText = name==='Mirich AI' ? 'Online • AI Assistant' : 'Online';
+document.getElementById('chatWindow').style.display='flex';
+if(name==='Mirich AI'){
+document.getElementById('msgs').innerHTML='<div class="dateSep">TODAY</div><div class="bubble other">Hello, I am <b>Mirich AI v22</b>.<br><br>I can now:<br>• Solve maths with <b>steps</b><br>• Give <b>long detailed</b> answers<br>• Understand <b>Pidgin & Slang</b><br>• <b>Generate images</b> inside chat<br>• <b>Build codes & websites</b><br><br>Try me below:<small>10:29 ✓✓</small></div><div class="bubble other">Quick tests:<div class="quickRow"><button class="quickBtn" onclick="quickAsk(this)">What is 2x+5=15?</button><button class="quickBtn" onclick="quickAsk(this)">Generate image of a mango</button><button class="quickBtn" onclick="quickAsk(this)">Build me a calculator website</button><button class="quickBtn" onclick="quickAsk(this)">Chale abeg explain loan</button></div><small>10:29 ✓✓</small></div>';
+} else {
+document.getElementById('msgs').innerHTML='<div class="dateSep">TODAY</div><div class="bubble other">Good day. This is '+name+'.<small>10:21 ✓✓</small></div><div class="bubble me">Hello '+name+', how are you?<small>'+timeNow()+' ✓✓</small></div>';
+}
+}
+function quickAsk(btn){ document.getElementById('msgInput').value=btn.innerText; sendMsg(); }
+function closeChat(){document.getElementById('chatWindow').style.display='none'}
+
+// ===== FIX BOLD - NO ** SHOWN =====
+function makeBold(text){
+  // Escape HTML first, but keep our <b>, <img>, code boxes safe later
+  // We handle ** -> <b> here
+  let t = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  t = t.replace(/^[\*\-] /gm, '• ');
+  // Remove any leftover ** just in case
+  t = t.replace(/\*\*/g, '');
+  return t;
+}
+function addBubble(text, who, isHTML){
+  let d=document.createElement('div'); d.className='bubble '+who;
+  if(isHTML){ d.innerHTML=text+'<small>'+timeNow()+' ✓✓</small>'; }
+  else { d.innerHTML=makeBold(text.replace(/</g,'&lt;'))+'<small>'+timeNow()+' ✓✓</small>'; }
+  document.getElementById('msgs').appendChild(d);
+  document.getElementById('msgs').scrollTop=9999;
+  return d;
+}
+function copyCode(id, btn){
+  let el=document.getElementById(id);
+  let txt=el.innerText;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>{ btn.innerText='Copied!'; setTimeout(()=>btn.innerText='📋 Copy Code',1500); }); }
+  else { let ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); btn.innerText='Copied!'; }
+}
+
+// ===== PIDGIN =====
+function pidginInfo(q){
+  let l=q.toLowerCase();
+  let isPidgin = l.includes('chale')||l.includes('abeg')||l.includes('how far')||l.includes('i dey')||l.includes('wahala')||l.includes('wey')||l.includes('sabi')||l.includes('no vex')||l.includes('jollof')||l.includes('dumsor');
+  let wantPidgin = (l.includes('pidgin')||l.includes('twi')) && (l.includes('reply')||l.includes('talk')||l.includes('speak')||l.includes('use')||l.includes('in pidgin'));
+  return {isPidgin, wantPidgin};
+}
+
+// ===== IMAGE =====
+function isImageRequest(q){
+  let l=q.toLowerCase();
+  return l.includes('generate image')||l.includes('draw')||l.includes('make picture')||l.includes('create image')||l.includes('make image')||l.includes('picture of');
+}
+function getImagePrompt(q){
+  return q.replace(/generate image|draw|make picture|create image|make image|picture of|please|abeg/gi,'').trim() || 'beautiful landscape';
+}
+
+// ===== CODE =====
+function isCodeRequest(q){
+  let l=q.toLowerCase();
+  return l.includes('build')||l.includes('code')||l.includes('website')||l.includes('make app')||l.includes('calculator website')||l.includes('create website')||l.includes('html');
+}
+function buildCodeAnswer(q){
+  let l=q.toLowerCase();
+  let title='Your Website / App';
+  let code='';
+  let explain='';
+  if(l.includes('calculator')){
+    title='Calculator Website';
+    explain='This is a simple calculator website. It can add, subtract, multiply and divide. It works on phone and computer.';
+    code='<!DOCTYPE html>\n<html>\n<head><title>My Calculator</title>\n<style>body{font-family:Arial;text-align:center;padding:20px} input{padding:12px;font-size:18px;width:200px} button{padding:12px 18px;font-size:18px;margin:5px;background:#00C853;border:none;border-radius:8px}</style></head>\n<body>\n<h1>My Calculator</h1>\n<input id="a" type="number" placeholder="First number">\n<input id="b" type="number" placeholder="Second number"><br><br>\n<button onclick="calc(\'+\')">+</button>\n<button onclick="calc(\x27-\x27')">-</button>\n<button onclick="calc(\x27*\x27')">x</button>\n<button onclick="calc(\x27/\x27')">/</button>\n<h2 id="res">Result: </h2>\n<script>function calc(op){let a=parseFloat(document.getElementById(\x27a\x27).value);let b=parseFloat(document.getElementById(\x27b\x27).value);let r=op===\x27+\x27?a+b:op===\x27-\x27?a-b:op===\x27*\x27?a*b:a/b;document.getElementById(\x27res\x27).innerText=\x27Result: \x27+r;}</script>\n</body>\n</html>';
+  } else if(l.includes('shop')||l.includes('store')||l.includes('business')){
+    title='Shop Website';
+    explain='This is a shop website. It shows your products, prices and your WhatsApp number so customers can order from you.';
+    code='<!DOCTYPE html>\n<html><head><title>My Shop</title><style>body{font-family:Arial;text-align:center} .card{border:1px solid #ddd;padding:15px;margin:10px;border-radius:10px} button{background:#00C853;padding:12px;border:none;border-radius:8px;font-size:16px}</style></head>\n<body><h1>My Shop</h1><p>Best prices in Kumasi!</p><div class="card"><h3>Shoes - 150 cedis</h3><button onclick="location.href=\x27https://wa.me/233000000000\x27">Order on WhatsApp</button></div><div class="card"><h3>Bag - 80 cedis</h3><button onclick="location.href=\x27https://wa.me/233000000000\x27">Order on WhatsApp</button></div></body></html>';
+  } else {
+    title='Your Code';
+    explain='Here is your code. Copy it, paste it in GitHub like you do for Mirich, and open the link. Tell me what you want the code to do and I will make it better.';
+    code='<!DOCTYPE html>\n<html><head><title>My App</title></head>\n<body><h1>Hello! This is my app</h1><p>Change this text to anything you want.</p><button onclick="alert(\x27Hello from Mirich!\x27)">Click Me</button></body></html>';
+  }
+  let id='code'+Math.floor(Math.random()*99999);
+  let html = '<b>'+title+'</b><br><br>'+explain+'<br><br><b>Your Code:</b><div class="codeBox" id="'+id+'">'+code.replace(/</g,'&lt;')+'</div><button class="copyBtn" onclick="copyCode(\''+id+'\',this)">📋 Copy Code</button><br><br><b>How to use:</b><br><b>Step 1:</b> Tap Copy Code<br><b>Step 2:</b> Paste in GitHub like Mirich<br><b>Step 3:</b> Open the link - your app is live!';
+  return html;
+}
+
+// ===== MATHS WITH STEPS =====
+function solveMath(q){
+  let s=q.toLowerCase().replace(/what is|what\'s|whats|solve|find|calculate|answer|please|tell me the answer|so tell me|give me/g,'').trim();
+  if((s===''||s==='the'||s==='the answer') && lastMath){ s=lastMath; }
+  let m = s.match(/([0-9x\.\+\-\*\/\=\(\)\s]+)/);
+  if(!m) return null;
+  let expr = m[0].replace(/\s/g,'').replace(/×/g,'*').replace(/÷/g,'/');
+  if(expr.length<2 || !/[0-9]/.test(expr)) return null;
+  if(expr.includes('x')) lastMath=expr;
+  else if(expr.includes('=')||expr.includes('*')||expr.includes('/')) lastMath=expr;
+  if(expr.includes('=')){
+    let parts=expr.split('='); let left=parts[0], right=parseFloat(parts[1]);
+    let mm = left.match(/^(-?\d*)x([\+\-]\d+)?$/);
+    if(mm){
+      let coef = mm[1]===''||mm[1]==='-' ? (mm[1]==='-'?-1:1) : parseFloat(mm[1]);
+      let constant = mm[2] ? parseFloat(mm[2]) : 0;
+      let x = (right-constant)/coef;
+      return '**Maths: '+expr+'**\n\n**Step 1:** Start with '+expr+'\n**Step 2:** Move '+constant+' to the other side: '+coef+'x = '+(right-constant)+'\n**Step 3:** Divide both sides by '+coef+': x = '+(right-constant)+' / '+coef+'\n\n**Answer:** x = '+x+'\n\n**Check:** Put x = '+x+' back: '+coef+'*'+x+' + '+constant+' = '+right+' - Correct!';
+    }
+  }
+  let xv = q.match(/x\s*=\s*(-?\d+)/);
+  if(expr.includes('x') && xv){
+    let x=parseFloat(xv[1]);
+    try{ let val = expr.replace(/(\d*)x/g, function(_,c){ return '('+(c===''?'1':c)+'*'+x+')'; }); let r=eval(val); return '**Maths: '+expr+' when x = '+x+'**\n\n**Step 1:** Replace x with '+x+': '+val+'\n**Step 2:** Calculate: '+val+' = '+r+'\n\n**Answer:** '+r; }catch(e){}
+  }
+  if(expr.includes('x')){
+    function ev(v){ try{ return eval(expr.replace(/(\d*)x/g,function(_,c){return '('+(c===''?'1':c)+'*'+v+')';})); }catch(e){ return '?'; } }
+    return '**Maths: '+expr+'**\n\nThis is an **expression**, not an equation - it has no single answer because x can be anything.\n\n**Step 1:** If x = 1, '+expr+' = '+ev(1)+'\n**Step 2:** If x = 2, '+expr+' = '+ev(2)+'\n**Step 3:** If x = 3, '+expr+' = '+ev(3)+'\n\n**Answer:** Tell me x, or give me an equation like 2x+4=10 and I will solve it fully.';
+  }
+  if(/^[0-9\+\-\*\/\.\(\)]+$/.test(expr)){
+    try{ let r=eval(expr); return '**Maths: '+expr+'**\n\n**Step 1:** Calculate '+expr+'\n**Step 2:** Follow BODMAS - brackets first, then multiply/divide, then add/subtract\n\n**Answer:** '+r; }catch(e){}
+  }
+  return null;
+}
+function localReply(q){
+  let l=q.toLowerCase();
+  if(l.includes('mirich')) return '**Mirich** is a private, secure messaging app. You can chat with friends, ask Mirich AI anything, generate images, and build codes.';
+  if(l.includes('apple')) return '**Apple** is a sweet fruit. It grows on a tree, red, green or yellow. It is **healthy** - full of vitamins and fibre. It gives you energy and helps your body stay strong.';
+  if(l.includes('loan')) return '**Loan** is money you borrow and pay back with **interest**.\n\n**Step 1:** Check **interest rate**\n**Step 2:** Check how long to pay\n**Step 3:** Check **total payback** - how much you will pay back in total\n\n**Important:** Only borrow for business, not for enjoyment.';
+  return null;
+}
+async function fetchAI(prompt){
+  let urls=['https://text.pollinations.ai/'+encodeURIComponent(prompt),'https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai'];
+  for(let u of urls){
+    try{
+      let ctrl=new AbortController(); let to=setTimeout(()=>ctrl.abort(),14000);
+      let res=await fetch(u,{signal:ctrl.signal}); clearTimeout(to);
+      if(res.ok){ let t=await res.text(); if(t && t.length>2 && !t.toLowerCase().includes('rate limit')) return t; }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,800));
+  }
+  throw new Error('fail');
+}
+async function askAI(q){
+  let info = pidginInfo(q);
+  let math = solveMath(q);
+  if(math){ history.push({q:q,a:math}); lastTopic=q; return math; }
+  if(q.toLowerCase().includes('tell me') && q.toLowerCase().includes('answer') && lastMath){
+    let m2=solveMath(lastMath); if(m2) return m2;
+  }
+  if(isImageRequest(q)){
+    let prompt=getImagePrompt(q);
+    let url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=512&height=512&seed='+Math.floor(Math.random()*9999);
+    history.push({q:q,a:'image:'+prompt});
+    return '__IMAGE__'+url+'__PROMPT__'+prompt;
+  }
+  if(isCodeRequest(q)){
+    let html=buildCodeAnswer(q);
+    history.push({q:q,a:html});
+    return '__CODE__'+html;
+  }
+  let context = history.slice(-4).map(h=>'User: '+h.q+'\nAI: '+h.a).join('\n');
+  let style = info.wantPidgin ? 'Reply in Ghana Pidgin, fun and simple. Use words like Chale, Abeg, Wahala.' : 'Reply in Clean English, simple and clear. Use LONG DETAILED answers with bold vital information using **bold** for important words. Use Step 1, Step 2 for explanations.';
+  let prompt = 'You are Mirich AI, friendly helpful assistant from Ghana. '+style+' Previous chat:\n'+context+'\nUser now: '+q+'\nAnswer:';
+  try{
+    let ans = await fetchAI(prompt);
+    history.push({q:q,a:ans});
+    lastTopic=q;
+    return ans;
+  }catch(e){
+    let l=localReply(q);
+    if(l) return l;
+    return '**Sorry**, the AI brain is busy right now. Wait 5 seconds and ask again. For maths, I can answer instantly - try **What is 12*8?**';
+  }
+}
+async function showTyping(q){
+  let t=document.getElementById('typing');
+  t.style.display='block';
+  t.innerText = currentChat + ' is thinking...';
+  document.getElementById('msgs').scrollTop=9999;
+  if(currentChat==='Mirich AI'){
+    let ans = await askAI(q);
+    t.style.display='none';
+    if(ans.startsWith('__IMAGE__')){
+      let parts=ans.replace('__IMAGE__','').split('__PROMPT__');
+      let url=parts[0], prompt=parts[1];
+      let html = '<b>Your image is ready!</b><br>Prompt: '+prompt+'<br><img src="'+url+'" alt="generated image">';
+      addBubble(html,'other',true);
+    } else if(ans.startsWith('__CODE__')){
+      addBubble(ans.replace('__CODE__',''),'other',true);
+    } else {
+      addBubble(ans,'other',false);
+    }
+  } else {
+    setTimeout(function(){ t.style.display='none'; addBubble(personReply(currentChat,q),'other',false); },800);
+  }
+}
+function personReply(name,q){
+  if(name==='Sophia') return 'Thank you, that means a lot. I am doing well, how about you?';
+  if(name==='Alexander') return 'Certainly. I understand. Let us proceed with that.';
+  if(name==='James') return 'Noted. I will get back to you shortly.';
+  return 'Got it.';
+}
+function askMirich(){
+  let inp=document.getElementById('searchInput');
+  let q=inp.value.trim();
+  if(!q) return;
+  openChat('Mirich AI','M');
+  addBubble(q,'me',false);
+  showTyping(q);
+  inp.value='';
+}
+function sendMsg(){
+  let inp=document.getElementById('msgInput');
+  if(!inp.value) return;
+  let q=inp.value;
+  addBubble(q,'me',false);
+  inp.value='';
+  showTyping(q);
+}
+document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') sendMsg(); });
+</script>
+</body>
+</html>
