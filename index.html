@@ -1,32 +1,3 @@
-onclick="openChat('Sophia','S')">
-<div class="avatar a2">S</div>
-<div class="chat-info"><div class="chat-top"><b>Sophia</b><span>08:47</span></div><p><span class="green">✓✓</span> Understood. Thank you.</p></div>
-</div>
-
-<div class="chat" onclick="openChat('James','J')">
-<div class="avatar a3">J</div>
-<div class="chat-info"><div class="chat-top"><b>James</b><span>31 Oct</span></div><p><span class="green">✓✓</span> Noted.</p></div>
-</div>
-
-<div class="footer-note">MICHAT • <b>SECURE</b> • PRIVATE</div>
-
-<button class="compose">+</button>
-
-<div class="bottom">
-<div class="active b1"><em>—</em>Chats</div>
-<div class="b2"><em>—</em>Feed</div>
-<div class="b3"><em>—</em>Calls</div>
-<div class="b4"><em>—</em>Profile</div>
-</div>
-
-<div id="chatWindow">
-<div id="chatHeader"><span onclick="closeChat()" style="font-size:24px;cursor:pointer;color:#FFC107">←</span><div class="avatar a1" id="chatAvatar">A</div><b id="chatName">Alexander</b></div>
-<div id="msgs"></div>
-<div id="inputBar"><input id="msgInput" placeholder="Write a message..."><button onclick="sendMsg()">→</button></div>
-</div>
-
-<script>
-function openChat(name,letter){
 document.getElementById('chatName').innerText=name;
 document.getElementById('chatAvatar').innerText=letter;
 document.getElementById('chatWindow').style.display='flex';
